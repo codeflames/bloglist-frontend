@@ -23,11 +23,11 @@ const App = () => {
   }, [])
 
   useEffect(() => {
-    const loggedInUserJSON = window.localStorage.getItem('loggedInUser');
+    const loggedInUserJSON = window.localStorage.getItem('loggedInUser')
     if (loggedInUserJSON) {
-      const user = JSON.parse(loggedInUserJSON);
-      setUser(user);
-      blogService.setToken(user.token);
+      const user = JSON.parse(loggedInUserJSON)
+      setUser(user)
+      blogService.setToken(user.token)
 
     }
   }, [])
@@ -36,45 +36,46 @@ const App = () => {
   const handleLogin = async (event) => {
     event.preventDefault()
     try {
-      const loggedinUser = await loginService.login({ username, password });
-      setUser(loggedinUser);
-      window.localStorage.setItem('loggedInUser', JSON.stringify(loggedinUser));
-      blogService.setToken(loggedinUser.token);
-      setUsername('');
-      setPassword('');
+      const loggedinUser = await loginService.login({ username, password })
+      setUser(loggedinUser)
+      window.localStorage.setItem('loggedInUser', JSON.stringify(loggedinUser))
+      blogService.setToken(loggedinUser.token)
+      setUsername('')
+      setPassword('')
 
     } catch (error) {
-      console.log(error);
-      showNotification({ message: error.response.data.error, type: 'error' });
+      console.log(error)
+      showNotification({ message: error.response.data.error, type: 'error' })
     }
 
   }
 
   const handleLogout = () => {
-    setUser(null);
-    blogService.setToken(null);
-    window.localStorage.removeItem('loggedInUser');
+    setUser(null)
+    blogService.setToken(null)
+    window.localStorage.removeItem('loggedInUser')
 
   }
 
   const handleCreateBlog = async (blogObject) => {
     try {
-      const newBlog = await blogService.create(blogObject);
-      setBlogs(blogs.concat(newBlog));
-      showNotification({ message: `a new blog ${newBlog.title} by ${newBlog.author} added`, type: 'success' });
+      const newBlog = await blogService.create(blogObject)
+      console.log('new blog from server', newBlog)
+      setBlogs(blogs.concat(newBlog))
+      showNotification({ message: `a new blog ${newBlog.title} by ${newBlog.author} added`, type: 'success' })
     } catch (error) {
-      console.log(error);
-      showNotification({ message: error.response.data.error, type: 'error' });
+      console.log(error)
+      showNotification({ message: error.response.data.error, type: 'error' })
     }
   }
 
   const showNotification = ({ message, type }) => {
-    setNotificationMessage(message);
-    setNotificationType(type);
+    setNotificationMessage(message)
+    setNotificationType(type)
     setTimeout(() => {
-      setNotificationMessage(null);
-      setNotificationType(null);
-    }, 5000);
+      setNotificationMessage(null)
+      setNotificationType(null)
+    }, 5000)
   }
 
 
@@ -99,13 +100,13 @@ const App = () => {
         <div style={hideWhenVisible}>
           <button onClick={() => setShowBlogForm(true)}>create new blog</button>
         </div>
-     <div style={showWhenVisible}>
+        <div style={showWhenVisible}>
 
-      <BlogForm createBlog={handleCreateBlog} />
-      
-      <button onClick={() => setShowBlogForm(false)}>cancel</button>
-      </div>
-       </div>)
+          <BlogForm createBlog={handleCreateBlog} />
+
+          <button onClick={() => setShowBlogForm(false)}>cancel</button>
+        </div>
+      </div>)
   }
 
   const blogsList = () => (
@@ -114,8 +115,8 @@ const App = () => {
       <Notification message={notificationMessage} type={notificationType} />
       <p>{user.name} logged in <button onClick={handleLogout}>Logout</button> </p>
       {createBlogForm()}
-      {blogs.map(blog =>
-        <Blog key={blog.id} blog={blog} />
+      {blogs.sort((a,b ) => b.likes - a.likes).map(blog =>
+        <Blog key={blog.id} blog={blog} currentUser={user} />
       )}
     </div>
   )

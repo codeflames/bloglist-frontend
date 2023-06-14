@@ -1,4 +1,4 @@
-const Notification = ({ message , type}) => {
+const Notification = ({ message , type }) => {
 
   const notificationStyle = {
     color: type === 'error' ? 'red' : 'green',
