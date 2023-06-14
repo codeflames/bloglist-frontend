@@ -3,6 +3,8 @@ import Blog from './components/Blog'
 import blogService from './services/blogs'
 import loginService from './services/login'
 import Notification from './components/Notification'
+import LoginForm from './components/LoginForm'
+import BlogForm from './components/BlogForm'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
@@ -11,9 +13,7 @@ const App = () => {
   const [user, setUser] = useState(null)
   const [notificationMessage, setNotificationMessage] = useState(null)
   const [notificationType, setNotificationType] = useState(null)
-  const [title, setTitle] = useState('')
-  const [author, setAuthor] = useState('')
-  const [url, setUrl] = useState('')
+  const [showBlogForm, setShowBlogForm] = useState(false)
 
 
   useEffect(() => {
@@ -45,7 +45,7 @@ const App = () => {
 
     } catch (error) {
       console.log(error);
-      showNotification({message: error.response.data.error, type: 'error'});
+      showNotification({ message: error.response.data.error, type: 'error' });
     }
 
   }
@@ -57,22 +57,18 @@ const App = () => {
 
   }
 
-  const handleCreateBlog = async (event) => {
-    event.preventDefault();
+  const handleCreateBlog = async (blogObject) => {
     try {
-      const newBlog = await blogService.create({ title, author, url });  
-      setTitle('');
-      setAuthor('');
-      setUrl('');
+      const newBlog = await blogService.create(blogObject);
       setBlogs(blogs.concat(newBlog));
-      showNotification({message: `a new blog ${newBlog.title} by ${newBlog.author} added`, type: 'success'});
+      showNotification({ message: `a new blog ${newBlog.title} by ${newBlog.author} added`, type: 'success' });
     } catch (error) {
       console.log(error);
-      showNotification({message: error.response.data.error, type: 'error'});
+      showNotification({ message: error.response.data.error, type: 'error' });
     }
   }
 
-  const showNotification = ({message, type}) => {
+  const showNotification = ({ message, type }) => {
     setNotificationMessage(message);
     setNotificationType(type);
     setTimeout(() => {
@@ -84,50 +80,33 @@ const App = () => {
 
 
   const loginForm = () => (
-    <div>
-      <h2>log in to application</h2>
-      {notificationMessage && Notification({message: notificationMessage, type: notificationType})}
-      <form onSubmit={handleLogin}>
-        <div>
-          username
-          <input
-            type="text"
-            value={username.value}
-            name="Email"
-            onChange={({ target }) => setUsername(target.value)}
-          />
-        </div>
-        <div>
-          password
-          <input
-            type="password"
-            value={password.value}
-            name="Password"
-            onChange={({ target }) => setPassword(target.value)}
-          />
-        </div>
-        <button type="submit">login</button>
-      </form>
-    </div>
+    <LoginForm
+      onSubmit={handleLogin}
+      username={username}
+      password={password}
+      onChangeUsername={setUsername}
+      onChangePassword={setPassword}
+    />
   )
 
-  const createBlogForm = () => (
-    <div>
-      <h2>create new</h2>
-      <form onSubmit={handleCreateBlog}>
-        <div>
-          title: <input type="text" value={title.value} name="Title" onChange={({ target }) => setTitle(target.value)} />
+
+  const createBlogForm = () => {
+    // showBlogForm styles
+    const showWhenVisible = { display: showBlogForm ? '' : 'none' }
+    const hideWhenVisible = { display: showBlogForm ? 'none' : '' }
+    return (
+      <div>
+        <div style={hideWhenVisible}>
+          <button onClick={() => setShowBlogForm(true)}>create new blog</button>
         </div>
-        <div>
-          author: <input type="text" value={author.value} name="Author" onChange={({ target }) => setAuthor(target.value)} />
-        </div>
-        <div>
-          url: <input type="text" value={url.value} name="Url" onChange={({ target }) => setUrl(target.value)} />
-        </div>
-        <button type="submit">create</button>
-      </form>
-    </div>
-  )
+     <div style={showWhenVisible}>
+
+      <BlogForm createBlog={handleCreateBlog} />
+      
+      <button onClick={() => setShowBlogForm(false)}>cancel</button>
+      </div>
+       </div>)
+  }
 
   const blogsList = () => (
     <div>
@@ -143,13 +122,13 @@ const App = () => {
 
   return (
     <div>
-      
+
       {!user && loginForm()}
       {user && <div>
-        
-        
+
+
         {blogsList()}
-        </div>
+      </div>
       }
     </div>
   )
