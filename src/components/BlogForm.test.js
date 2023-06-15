@@ -3,14 +3,14 @@ import { render, screen, fireEvent } from '@testing-library/react'
 import BlogForm from './BlogForm'
 
 describe('<BlogForm />', () => {
-  test('calls createBlog with the correct details when a new blog is created', () => {
+  test('calls createBlog with the correct details when a new blog is created', async () => {
     // Arrange
     const mockCreateBlog = jest.fn()
     render(<BlogForm createBlog={mockCreateBlog} />)
 
-    const titleInput = screen.getByLabelText('Title')
-    const authorInput = screen.getByLabelText('Author')
-    const urlInput = screen.getByLabelText('Url')
+    const titleInput = screen.getByPlaceholderText('Blog Title')
+    const authorInput = screen.getByPlaceholderText('Blog Author')
+    const urlInput = screen.getByPlaceholderText('Blog URL')
     const createButton = screen.getByText('Create')
 
     // Act
@@ -20,7 +20,7 @@ describe('<BlogForm />', () => {
     fireEvent.click(createButton)
 
     // Assert
-    expect(mockCreateBlog).toHaveBeenCalledTimes(1)
+    expect(mockCreateBlog.mock.calls).toHaveLength(1)
     expect(mockCreateBlog).toHaveBeenCalledWith({
       title: 'Test Title',
       author: 'Test Author',
