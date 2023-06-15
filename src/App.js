@@ -78,6 +78,27 @@ const App = () => {
     }, 5000)
   }
 
+  const handleRemove = async(blog) => {
+    if(window.confirm(`Remove blog ${blog.title} by ${blog.author}`)){
+      await blogService.deleteBlog(blog.id)
+      window.location.reload()
+    }
+  }
+
+  const handleLike = async(blog) => {
+    console.log(blog)
+    const updatedBlog = {
+      ...blog,
+      likes: blog.likes + 1,
+      user: blog.user ? blog.user.id : null
+    }
+    const returnedBlog = await blogService.update(blog.id, updatedBlog)
+    console.log(returnedBlog)
+    blog.likes = returnedBlog.likes
+    setBlogs(blogs.map(b => b.id === blog.id ? blog : b))
+  }
+
+
 
 
   const loginForm = () => (
@@ -116,7 +137,7 @@ const App = () => {
       <p>{user.name} logged in <button onClick={handleLogout}>Logout</button> </p>
       {createBlogForm()}
       {blogs.sort((a,b ) => b.likes - a.likes).map(blog =>
-        <Blog key={blog.id} blog={blog} currentUser={user} />
+        <Blog key={blog.id} blog={blog} currentUser={user} handleLike={handleLike} handleRemove={handleRemove} />
       )}
     </div>
   )
