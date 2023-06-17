@@ -78,51 +78,54 @@ describe('<Blog />', () => {
 
 })
 
-test('clicking the like button twice calls event handler twice', async() => {
-  const blog = {
-    title: 'Test title',
-    author: 'Test author',
-    url: 'Test url',
-    likes: 0,
-    user: {
-      name: 'Test user',
-      id: '1234',
-      username: 'testuser'
+describe('<Blog />', () => {
 
+  test('clicking the like button twice calls event handler twice', async() => {
+    const blog = {
+      title: 'Test title',
+      author: 'Test author',
+      url: 'Test url',
+      likes: 0,
+      user: {
+        name: 'Test user',
+        id: '1234',
+        username: 'testuser'
+
+      }
     }
-  }
 
-  const currentUser = {
-    id: '1234',
-    username: 'testuser',
-    name: 'Test user',
-  }
+    const currentUser = {
+      id: '1234',
+      username: 'testuser',
+      name: 'Test user',
+    }
 
-  const mockHandleLike = jest.fn()
-  const mockHandleRemove = jest.fn()
-  const mockToggleShowDetails = jest.fn()
-  const { container } = render(<Blog blog={blog} currentUser={currentUser} handleLike={mockHandleLike} mockHandleRemove={mockHandleRemove}>
-    <div>
-      <button onClick={mockToggleShowDetails}>view</button>
+    const mockHandleLike = jest.fn()
+    const mockHandleRemove = jest.fn()
+    const mockToggleShowDetails = jest.fn()
+    const { container } = render(<Blog blog={blog} currentUser={currentUser} handleLike={mockHandleLike} mockHandleRemove={mockHandleRemove}>
+      <div>
+        <button onClick={mockToggleShowDetails}>view</button>
       toggle children
-    </div>
-  </Blog>)
+      </div>
+    </Blog>)
 
-  const button = await screen.findByText('view')
-  fireEvent.click(button)
+    const button = await screen.findByText('view')
+    fireEvent.click(button)
 
-  screen.debug(container)
+    screen.debug(container)
 
-  const urlElement = screen.queryByText(blog.url)
-  expect(urlElement).toBeDefined()
+    const urlElement = screen.queryByText(blog.url)
+    expect(urlElement).toBeDefined()
 
-  const likesElement = screen.queryByText(`likes ${blog.likes}`)
-  expect(likesElement).toBeDefined()
+    const likesElement = screen.queryByText(`likes ${blog.likes}`)
+    expect(likesElement).toBeDefined()
 
-  const likeButton = await screen.findByText('like')
-  fireEvent.click(likeButton)
+    const likeButton = await screen.findByText('like')
+    fireEvent.click(likeButton)
 
-  expect(mockHandleLike.mock.calls).toHaveLength(1)
-  fireEvent.click(likeButton)
-  expect(mockHandleLike.mock.calls).toHaveLength(2)
+    expect(mockHandleLike.mock.calls).toHaveLength(1)
+    fireEvent.click(likeButton)
+    expect(mockHandleLike.mock.calls).toHaveLength(2)
+  })
 })

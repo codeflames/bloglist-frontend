@@ -44,8 +44,8 @@ const App = () => {
       setPassword('')
 
     } catch (error) {
-      console.log(error)
       showNotification({ message: error.response.data.error, type: 'error' })
+      console.log(error)
     }
 
   }
@@ -108,6 +108,8 @@ const App = () => {
       password={password}
       onChangeUsername={setUsername}
       onChangePassword={setPassword}
+      notificationMessage={notificationMessage}
+      notificationType={notificationType}
     />
   )
 
